@@ -1,0 +1,1 @@
+{"mixinTypes":[],"builders":{"configs":{}},"runners":{"configs":{"system:/javascript/web/grunt":{"ram":1000,"variables":{},"options":{}}},"default":"system:/javascript/web/grunt"},"description":"","type":"AngularJS","attributes":{"framework":["AngularJS"],"language":["javascript"]}}
