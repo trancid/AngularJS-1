@@ -12,13 +12,18 @@
     
     //Model
     var model = {
-      user: "Adam",
-      items: [
-        {action: "Buy flowers", done: false}, 
-        {action: "Buy trees", done: false},
-        {action: "Buy shoes", done: true}
-      ]
+      user: "Adam"
     };
+    
+    //load data from file; the run method is executed after angularJS setup
+    //http is a service object
+    todoApp.run(function($http){
+      $http.get("resources/todo.json").success(function(data){
+        model.items = data;
+      }).catch(function(){
+        alert("error happened");
+      });
+    });
     
     //Initialize controller
     todoApp.controller("TodoController", function($scope){
