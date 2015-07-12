@@ -7,19 +7,75 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
   <script>
+    //AngularJS app
     var todoApp = angular.module("todoApp", []);
+    
+    //Model
+    var model = {
+      user: "Adam",
+      items: [
+        {action: "Buy flowers", done: false}, 
+        {action: "Buy trees", done: false},
+        {action: "Buy shoes", done: true}
+      ]
+    };
+    
+    //Initialize controller
+    todoApp.controller("TodoController", function($scope){
+      //scope is a service object; define property that refers to the model
+      $scope.todo = model;
+      
+      //add behavior to the controller: count number of incomplete items
+      //added behavior by foreseeing this function (incompleteCount is a function)
+      $scope.incompleteCount = function(){
+        var count = 0;
+        angular.forEach($scope.todo.items, function(item){
+          if(!item.done){
+            count++;
+          }
+        })
+        return count;
+      };
+      
+      //based on above behavior, determine which label to show
+      $scope.warningLevel = function(){
+        return $scope.incompleteCount() < 3 ? "label-success" : "label-warning";  
+      }
+      
+      //add behavior
+      //notice that a parameter is passed in
+      $scope.addNewItem = function(actionText){
+        $scope.todo.items.push({action: actionText , done: false});
+      }
+    });
+    
+    //filter factory method
+    //returns a function returning the filtered set of data
+    todoApp.filter("checkedItems", function(){
+      return function(items, showComplete){
+        var resultArr = [];//init empty array
+        angular.forEach(items, function(item){
+          if(item.done == false || showComplete){
+            resultArr.push(item);
+          }
+        });
+        return resultArr;
+      };
+    });
+    
   </script>
 </head>
 
-<body>
+<!-- Controller is responsible for below part -->
+<body ng-controller="TodoController">
   <div class="page-header">
-    <h1>Adam's To Do List</h1>
+    <h1>{{todo.user}}'s To Do List <span class="label label-default" ng-class="warningLevel()" ng-hide="incompleteCount() == 0">{{incompleteCount()}}</span></h1>
   </div>
   <div class="panel">
     <div class="input-group">
-      <input class="form-control" />
+      <input class="form-control" ng-model="actionText" />
       <span class="input-group-btn">
-        <button class="btn btn-default">Add</button>
+        <button class="btn btn-default" ng-click="addNewItem(actionText)">Add</button>
       </span>
     </div>
     <table class="table table-striped">
@@ -30,10 +86,18 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>Buy flowers</td><td>No</td></tr>
-        <tr><td>Buy shoes</td><td>Yes</td></tr>
+        <!-- Notice the use of the customer filter 'checkedItems' -->
+        <!-- Notice that the model element 'showComplete' is passed to the filter -->
+        <!-- Notice that there is no need to pass in items (while it is a function parameter) -->
+        <tr ng-repeat="item in todo.items | checkedItems:showComplete | orderBy: 'action'">
+          <td>{{item.action}}</td>
+          <td><input type="checkbox" ng-model="item.done"/></td>
+        </tr>
       </tbody>
     </table>
+    <div class="checkbox-inline">
+      <label><input type="checkbox" ng-model="showComplete"> Show complete</input></label>
+    </div>
   </div>
 </body>
 
