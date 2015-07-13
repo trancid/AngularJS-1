@@ -17,8 +17,10 @@
     
     //load data from file; the run method is executed after angularJS setup
     //http is a service object
+    //Notice that this way of working is Dependency Injection (inject the service object you want to use...)
     todoApp.run(function($http){
-      $http.get("resources/todo.json").success(function(data){
+      $http.get("resources/todo.json")//'Get' returns a promise; 
+        .success(function(data){//Callback in case of success
         model.items = data;
       }).catch(function(){
         alert("error happened");
