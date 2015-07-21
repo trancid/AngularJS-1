@@ -1,0 +1,5 @@
+[
+    {"action": "Buy flowers", "done": false}, 
+    {"action": "Buy trees", "done": false}, 
+    {"action": "Buy shoes", "done": true}
+]
