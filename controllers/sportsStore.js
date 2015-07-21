@@ -1,12 +1,13 @@
 // No second argument in 'module' as it should use the created module
 angular.module("sportsStore")
-.controller("sportsStoreCtrl", function($scope){
-   $scope.data = {
-       products: [
-           {name: "Product #1", description: "A product", category: "Category #1", price: 100},
-           {name: "Product #2", description: "A product", category: "Category #2", price: 110},
-           {name: "Product #3", description: "A product", category: "Category #3", price: 210},
-           {name: "Product #4", description: "A product", category: "Category #4", price: 202}
-           ]
-   }; 
+.constant("dataUrl", "https://www.i-net.be/angularjs/products.php")
+.controller("sportsStoreCtrl", function($scope, $http, dataUrl){
+    $scope.data = {};// empty object
+    $http.get(dataUrl)
+        .success(function(data){
+            $scope.data.products = data;
+        })
+        .error(function(error){
+            $scope.data.error = error;
+        })
 });
