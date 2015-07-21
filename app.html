@@ -6,17 +6,45 @@
     <link href="bootstrap.css" rel="stylesheet" />
     <link href="bootstrap-theme.css" rel="stylesheet" />
     <script>
-        angular.module("sportsStore", []);
+        angular.module("sportsStore", ["customFilters"]);
     </script>
+    <script src="controllers/sportsStore.js"></script>
+    <script src="controllers/productListControllers.js"></script>
+    <script src="filters/customFilters.js"></script>
 </head>
-<body>
+<body ng-controller="sportsStoreCtrl">
     
     <div class="navbar navbar-inverse">
         <a href="#" class="navbar-brand">SPORTS STORE</a>
     </div>
-    <div class="panel panel-default row">
-        <div class="col-xs-3">Categories</div>
-        <div class="col-xs-8">Products</div>
+    <div class="panel panel-default row" ng-controller="productListCtrl">
+        <div class="col-xs-3">
+            <a
+                ng-click="selectCategory()"
+                class="btn btn-default btn-block btn-lg">Home</a>
+            <a 
+                ng-repeat="item in data.products | orderBy:'category' | unique: 'category'"
+                ng-click="selectCategory(item)"
+                ng-class="getCategoryCSSClass(item)"
+                class="btn btn-default btn-block btn-lg">{{item}}</a>
+                <!-- Notice that 'item' is the expression, as those are the elements returned by the 'unique' filter -->
+        </div>
+        <div class="col-xs-8">
+            <!-- Notice that the custom filter 'categoryFilterFn' gets a product passed in (object from data) -->
+            <div class="well" ng-repeat="item in data.products | filter:categoryFilterFn | range:selectedPage:pageSize">
+                <!-- Notice the filter that is applied to 'item.price' -->
+                <h3>{{item.name}}<span class="pull-right label label-primary">{{item.price | currency}}</span></h3>
+                <span class="lead">{{item.description}}</span>
+            </div>
+            <div class="pull-right btn-group">
+                <a
+                    ng-repeat="item in data.products | filter:categoryFilterFn | pageCount:pageSize"
+                    ng-click="selectPage($index+1)"
+                    ng-class="getPageCSSClass($index+1)"
+                    class="btn btn-default"
+                >{{$index+1}}</a>
+            </div>
+        </div>
     </div>
     
 </body>
